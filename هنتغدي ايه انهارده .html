@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>هنتغدي إيه النهارده؟</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'kufi': ['Noto Kufi Arabic', 'sans-serif'],
+                        'serif': ['Instrument Serif', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Kufi Arabic', sans-serif; }
+        .font-serif { font-family: 'Instrument Serif', serif; }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .noise-overlay {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.3;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(3deg); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+
+        @keyframes bounce-gentle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-fade-in-up { animation: fadeInUp 0.8s ease-out forwards; }
+        .animate-scale-in { animation: scaleIn 0.5s ease-out forwards; }
+        .animate-spin-slow { animation: spin-slow 20s linear infinite; }
+        .animate-bounce-gentle { animation: bounce-gentle 2s ease-in-out infinite; }
+
+        .shimmer-text {
+            background: linear-gradient(90deg, #ffffff 0%, #10b981 25%, #ffffff 50%, #34d399 75%, #ffffff 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s linear infinite;
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-4px);
+        }
+        .card-hover:hover .card-border {
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .meal-card {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .btn-primary {
+            background: #ffffff;
+            color: #000000;
+            transition: all 0.15s ease;
+        }
+        .btn-primary:hover {
+            background: #e2e8f0;
+        }
+
+        .btn-emerald {
+            background: #10b981;
+            color: #ffffff;
+            transition: all 0.15s ease;
+        }
+        .btn-emerald:hover {
+            background: #059669;
+        }
+
+        .category-btn {
+            transition: all 0.2s ease;
+        }
+        .category-btn.active {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: rgba(16, 185, 129, 0.4);
+            color: #10b981;
+        }
+
+        .recipe-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease, opacity 0.3s ease;
+            opacity: 0;
+        }
+        .recipe-content.open {
+            max-height: 2000px;
+            opacity: 1;
+        }
+
+        .dice-spin {
+            animation: spin-slow 0.5s linear;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #09090b; }
+        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+
+        .hero-glow {
+            background: radial-gradient(circle at 50% 30%, rgba(16, 185, 129, 0.08) 0%, rgba(0,0,0,0) 60%);
+        }
+
+        .tag-ingredient {
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            transition: all 0.2s ease;
+        }
+        .tag-ingredient:hover {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #10b981, #059669);
+            min-width: 32px;
+            height: 32px;
+        }
+
+        .toast {
+            animation: fadeInUp 0.4s ease-out forwards;
+        }
+
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+        }
+    </style>
+</head>
+<body class="bg-[#09090b] text-white min-h-screen overflow-x-hidden">
+
+    <!-- Noise Overlay -->
+    <div class="noise-overlay fixed inset-0 z-50 pointer-events-none"></div>
+
+    <!-- Hero Glow -->
+    <div class="hero-glow fixed inset-0 z-0 pointer-events-none"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-40 px-6 py-5" style="background: rgba(9,9,11,0.8); backdrop-filter: blur(12px);">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center">
+                    <i data-lucide="chef-hat" class="w-5 h-5 text-white"></i>
+                </div>
+                <span class="text-lg font-medium tracking-tight">هنتغدي إيه؟</span>
+            </div>
+            <div class="flex items-center gap-6">
+                <a href="#categories" class="text-sm text-zinc-400 hover:text-white transition-colors">الوجبات</a>
+                <a href="#random" class="text-sm text-zinc-400 hover:text-white transition-colors">اقتراح عشوائي</a>
+                <button onclick="openFavorites()" class="flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors">
+                    <i data-lucide="heart" class="w-4 h-4"></i>
+                    <span id="fav-count">0</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex flex-col items-center justify-center pt-20 px-6 relative">
+        <div class="text-center max-w-4xl mx-auto relative z-10">
+            <div class="animate-float mb-8">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel text-emerald-400 text-sm">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                    <span>أكتر من 20 وصفة مصرية</span>
+                </div>
+            </div>
+
+            <h1 class="text-5xl md:text-7xl lg:text-8xl font-medium tracking-tight leading-[0.9] mb-6">
+                <span class="block">هنتغدي</span>
+                <span class="block shimmer-text">إيه النهارده؟</span>
+            </h1>
+
+            <p class="text-lg md:text-xl text-zinc-400 font-light leading-relaxed max-w-2xl mx-auto mb-10">
+                مش عارف تتغدى إيه؟ اختار وجبتك أو ضغط عشان نقترحلك حاجة لذيذة بالمكونات والطريقة
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <button onclick="scrollToRandom()" class="btn-emerald px-8 py-3.5 rounded-full text-base font-medium flex items-center gap-2 group">
+                    <i data-lucide="shuffle" class="w-5 h-5 group-hover:rotate-180 transition-transform duration-500"></i>
+                    اقترحلي حاجة
+                </button>
+                <button onclick="scrollToCategories()" class="btn-primary px-8 py-3.5 rounded-full text-base font-medium flex items-center gap-2">
+                    <i data-lucide="grid-3x3" class="w-5 h-5"></i>
+                    تصفح الوجبات
+                </button>
+            </div>
+        </div>
+
+        <!-- Floating Food Emojis -->
+        <div class="absolute top-1/4 right-10 text-4xl animate-float" style="animation-delay: 0s;">🍗</div>
+        <div class="absolute top-1/3 left-16 text-3xl animate-float" style="animation-delay: 1s;">🥘</div>
+        <div class="absolute bottom-1/3 right-20 text-3xl animate-float" style="animation-delay: 2s;">🧆</div>
+        <div class="absolute bottom-1/4 left-10 text-4xl animate-float" style="animation-delay: 3s;">🌶️</div>
+        <div class="absolute top-1/2 right-1/4 text-2xl animate-float" style="animation-delay: 1.5s;">🎂</div>
+
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce-gentle">
+            <i data-lucide="chevron-down" class="w-6 h-6 text-zinc-600"></i>
+        </div>
+    </section>
+
+    <!-- Random Suggestion Section -->
+    <section id="random" class="py-24 px-6 relative">
+        <div class="max-w-4xl mx-auto">
+            <div class="glass-panel rounded-2xl p-8 md:p-12 relative overflow-hidden">
+                <!-- Decorative corner -->
+                <div class="absolute top-0 left-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl"></div>
+                <div class="absolute bottom-0 right-0 w-40 h-40 bg-emerald-500/5 rounded-full blur-3xl"></div>
+
+                <div class="text-center relative z-10">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 mb-6" id="dice-icon">
+                        <i data-lucide="dice-5" class="w-8 h-8 text-emerald-400"></i>
+                    </div>
+
+                    <h2 class="text-3xl md:text-4xl font-medium tracking-tight mb-3">اقتراح عشوائي</h2>
+                    <p class="text-zinc-400 font-light mb-8">اضغط وخلي القدر يقرر عنك</p>
+
+                    <button onclick="randomMeal()" class="btn-emerald px-10 py-4 rounded-full text-lg font-medium inline-flex items-center gap-3 group" id="random-btn">
+                        <i data-lucide="wand-2" class="w-5 h-5"></i>
+                        <span>يا تره إيه هيا؟</span>
+                    </button>
+
+                    <!-- Random Result -->
+                    <div id="random-result" class="mt-10 hidden">
+                        <div class="animate-scale-in">
+                            <div class="inline-block text-6xl mb-4" id="random-emoji">🍗</div>
+                            <h3 class="text-2xl md:text-3xl font-medium mb-2" id="random-name">-</h3>
+                            <p class="text-zinc-400 mb-2" id="random-category">-</p>
+                            <p class="text-zinc-500 text-sm mb-6" id="random-time">-</p>
+                            <div class="flex items-center justify-center gap-3">
+                                <button onclick="showRecipeById()" class="btn-primary px-6 py-2.5 rounded-full text-sm font-medium flex items-center gap-2">
+                                    <i data-lucide="book-open" class="w-4 h-4"></i>
+                                    الوصفة
+                                </button>
+                                <button onclick="randomMeal()" class="px-6 py-2.5 rounded-full text-sm font-medium border border-white/10 hover:border-white/20 transition-colors flex items-center gap-2">
+                                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                                    وجبة تانية
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section id="categories" class="py-24 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-12">
+                <p class="text-emerald-400 text-sm font-medium uppercase tracking-wider mb-3">الوجبات</p>
+                <h2 class="text-3xl md:text-4xl font-medium tracking-tight mb-4">اختار نوع الوجبة</h2>
+                <p class="text-zinc-400 font-light">اضغط على النوع عشان تشوف كل الأكلات المتاحة</p>
+            </div>
+
+            <!-- Category Buttons -->
+            <div class="flex flex-wrap items-center justify-center gap-3 mb-12">
+                <button onclick="filterMeals('all')" class="category-btn active px-5 py-2.5 rounded-full border border-white/10 text-sm font-medium" data-cat="all">
+                    الكل
+                </button>
+                <button onclick="filterMeals('breakfast')" class="category-btn px-5 py-2.5 rounded-full border border-white/10 text-zinc-400 text-sm font-medium" data-cat="breakfast">
+                    🌅 فطار
+                </button>
+                <button onclick="filterMeals('lunch')" class="category-btn px-5 py-2.5 rounded-full border border-white/10 text-zinc-400 text-sm font-medium" data-cat="lunch">
+                    ☀️ غدا
+                </button>
+                <button onclick="filterMeals('dinner')" class="category-btn px-5 py-2.5 rounded-full border border-white/10 text-zinc-400 text-sm font-medium" data-cat="dinner">
+                    🌙 عشا
+                </button>
+                <button onclick="filterMeals('snack')" class="category-btn px-5 py-2.5 rounded-full border border-white/10 text-zinc-400 text-sm font-medium" data-cat="snack">
+                    🍿 سناك
+                </button>
+            </div>
+
+            <!-- Meals Grid -->
+            <div id="meals-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Meals will be injected here -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="hidden text-center py-20">
+                <div class="text-5xl mb-4">🔍</div>
+                <p class="text-zinc-400 text-lg">مفيش وجبات في التصنيف ده</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-24 px-6 border-t border-white/5">
+        <div class="max-w-5xl mx-auto">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div>
+                    <div class="text-3xl md:text-4xl font-medium text-emerald-400 mb-1">20+</div>
+                    <div class="text-sm text-zinc-500">وصفة مصرية</div>
+                </div>
+                <div>
+                    <div class="text-3xl md:text-4xl font-medium text-emerald-400 mb-1">4</div>
+                    <div class="text-sm text-zinc-500">تصنيفات</div>
+                </div>
+                <div>
+                    <div class="text-3xl md:text-4xl font-medium text-emerald-400 mb-1">15</div>
+                    <div class="text-sm text-zinc-500">دقيقة أقصى</div>
+                </div>
+                <div>
+                    <div class="text-3xl md:text-4xl font-medium text-emerald-400 mb-1">∞</div>
+                    <div class="text-sm text-zinc-500">لذة</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-6 border-t border-white/5">
+        <div class="max-w-7xl mx-auto text-center">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <div class="w-6 h-6 rounded-md bg-emerald-500 flex items-center justify-center">
+                    <i data-lucide="chef-hat" class="w-4 h-4 text-white"></i>
+                </div>
+                <span class="font-medium">هنتغدي إيه؟</span>
+            </div>
+            <p class="text-zinc-600 text-sm">صنع بـ ❤️ لمحبي الأكل المصري</p>
+        </div>
+    </footer>
+
+    <!-- Recipe Modal -->
+    <div id="recipe-modal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0" onclick="closeModal()"></div>
+        <div class="relative z-10 flex items-center justify-center min-h-screen p-4">
+            <div class="bg-[#0f0f0f] border border-white/10 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-scale-in">
+                <div class="sticky top-0 bg-[#0f0f0f] border-b border-white/5 p-6 flex items-center justify-between z-10">
+                    <div>
+                        <h3 class="text-xl font-medium" id="modal-name">-</h3>
+                        <p class="text-sm text-zinc-500" id="modal-category-time">-</p>
+                    </div>
+                    <button onclick="closeModal()" class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/5 transition-colors">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                <div class="p-6" id="modal-body">
+                    <!-- Content injected -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Favorites Modal -->
+    <div id="fav-modal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0" onclick="closeFavorites()"></div>
+        <div class="relative z-10 flex items-center justify-center min-h-screen p-4">
+            <div class="bg-[#0f0f0f] border border-white/10 rounded-2xl max-w-lg w-full max-h-[80vh] overflow-y-auto animate-scale-in">
+                <div class="sticky top-0 bg-[#0f0f0f] border-b border-white/5 p-6 flex items-center justify-between z-10">
+                    <h3 class="text-xl font-medium flex items-center gap-2">
+                        <i data-lucide="heart" class="w-5 h-5 text-red-400"></i>
+                        المفضلة
+                    </h3>
+                    <button onclick="closeFavorites()" class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/5 transition-colors">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                <div class="p-6" id="fav-body">
+                    <!-- Content injected -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-6 left-6 z-50 flex flex-col gap-2"></div>
+
+    <script>
+        // ============ MEALS DATA ============
+        const meals = [
+            {
+                id: 1,
+                name: "فول مدمس بالزيت الحار",
+                emoji: "🫘",
+                category: "breakfast",
+                categoryLabel: "🌅 فطار",
+                time: "10 دقائق",
+                difficulty: "سهل",
+                description: "الفول المدمس أكلة مصرية أصلية، بسيطة وسريعة ومرضية جداً",
+                ingredients: ["2 كوب فول مدمس", "2 فص ثوم مهروس", "عصير ليمونة", "زيت زيتون", "ملح وفلفل أسود", "كمون", "طماطم مقطعة", "بقدونس طازج"],
+                steps: [
+                    "سخن الفول المدمس على النار حتى يغلي",
+                    "اهرسه بالشوكة أو بالخلاط حسب السماكة اللي عايزها",
+                    "حضر التقلية: اخلط الثوم مع عصير الليمون والكمون والملح والفلفل",
+                    "ضيف التقلية على الفول وقلّب كويس",
+                    "قدمه في طبق وزيّنه بالطماطم المقطعة والبقدونس",
+                    "اسكب زيت زيتون على الوجه واستمتع!"
+                ]
+            },
+            {
+                id: 2,
+                name: "طعمية (فلافل) مصرية",
+                emoji: "🧆",
+                category: "breakfast",
+                categoryLabel: "🌅 فطار",
+                time: "30 دقيقة",
+                difficulty: "متوسط",
+                description: "طعمية مقرمشة من بره، ناعمة من جوه.. سر الفطار المصري",
+                ingredients: ["2 كوب فول مقشور منقوع", "1 بصلة كبيرة", "3 فصوص ثوم", "بقدونس وكراث", "كزبرة خضراء", "كمون وبهارات", "ملح وفلفل", "بيكربونات صودا", "زيت للقلي"],
+                steps: [
+                    "صفّي الفول المنقوع جيداً من الماء",
+                    "اخلط الفول مع البصل والثوم والبقدونس والكراث والكزبرة في الخلاط",
+                    "اضف الكمون والبهارات والملح والفلفل واخلط كويس",
+                    "اضف رشة بيكربونات صودا وقلّب",
+                    "شكّل الحاجة على شكل أقراص واقليها في زيت غزير حار",
+                    "قدمها مع الخبز والطحينة والسلطة"
+                ]
+            },
+            {
+                id: 3,
+                name: "أومليت بالجبن والطماطم",
+                emoji: "🍳",
+                category: "breakfast",
+                categoryLabel: "🌅 فطار",
+                time: "10 دقائق",
+                difficulty: "سهل",
+                description: "فطار سريع وشهي بالمكونات اللي موجودة في أي بيت",
+                ingredients: ["3 بيضات", "ربع كوب جبن مبشور", "طماطم مقطعة", "فلفل ألوان", "بصل أخضر", "ملح وفلفل أسود", "زبدة"],
+                steps: [
+                    "اخفق البيض مع الملح والفلفل",
+                    "سخن الزبدة في المقلاة على نار متوسطة",
+                    "اضف البصل والطماطم والفلفل وقلّب دقيقة",
+                    "اسكب البيض فوق الخضار واتركه يتماسك شوية",
+                    "رش الجبن على نصف البيضة واطوي النصف التاني",
+                    "قدمها فوراً مع خبز محمص"
+                ]
+            },
+            {
+                id: 4,
+                name: "كشري",
+                emoji: "🥘",
+                category: "lunch",
+                categoryLabel: "☀️ غدا",
+                time: "45 دقيقة",
+                difficulty: "متوسط",
+                description: "أكلة الشارع المصري الأشهر.. أرز ومكرونة وعدس وتقلية",
+                ingredients: ["1 كوب أرز", "1 كوب مكرونة", "1 كوب عدس بني", "بصلة كبيرة للتقلية", "2 بصلة صغيرة للصلصة", "طماطم مفرومة", "كمون وبهارات", "ثوم", "خل أبيض", "زيت للقلي"],
+                steps: [
+                    "اسلق العدس في ماء كتير حتى ينضج مع ملح وكمون",
+                    "سلق المكرونة وصفيها",
+                    "اطبخ الأرز العادي بالطريقة المعتادة",
+                    "حضر الدقة: اطحن الثوم والخل والكمون والملح مع شوية ماء العدس",
+                    "حضر التقلية: قطّع البصلة شرائح واقليها حتى ذهبية",
+                    "حضر الصلصة: شوح البصل ثم اضف الطماطم والبهارات",
+                    "قدم الكشري: أرز + مكرونة + عدس + دقة + صلصة + تقلية"
+                ]
+            },
+            {
+                id: 5,
+                name: "مولوخية بالأرز",
+                emoji: "🥬",
+                category: "lunch",
+                categoryLabel: "☀️ غدا",
+                time: "30 دقيقة",
+                difficulty: "سهل",
+                description: "مولوخية خضراء ناعمة بالمرقة والأرز الأبيض.. أكلة مصرية كلاسيك",
+                ingredients: ["500g مولوخية مفرومة", "4 أكواب مرقة دجاج", "3 فصوص ثوم", "1 ملعقة كبيرة كزبرة جافة", "ملح وفلفل", "ليمون", "أرز أبيض"],
+                steps: [
+                    "سخن المرقة حتى تغلي",
+                    "اضف المولوخية المفرومة وقلّب بسرعة عشان متغلظش",
+                    "خليها تغلي 5 دقائق على نار هادية",
+                    "في مقلاة صغيرة: شوح الثوم في زيت ثم اضف الكزبرة الجافة",
+                    "اسكب خليط الثوم والكزبرة على المولوخية فوراً (صوت الشحومة)",
+                    "قلّب واتركها دقيقة ثم ارفعها من على النار",
+                    "قدمها مع الأرز الأبيض والليمون"
+                ]
+            },
+            {
+                id: 6,
+                name: "فراخ مشوية بالأعشاب",
+                emoji: "🍗",
+                category: "lunch",
+                categoryLabel: "☀️ غدا",
+                time: "60 دقيقة",
+                difficulty: "متوسط",
+                description: "فراخ مقرمشة من بره، طرية من جوه.. بتتغدى بكل لذة",
+                ingredients: ["1 دجاجة كاملة مقطعة", "3 فصوص ثوم مهروس", "عصير ليمونة", "زيت زيتون", "بهارات مشوية", "كمون وكركم", "بابريكا", "ملح وفلفل أسود", "بقدونس وزعتر طازج"],
+                steps: [
+                    "اعمل شقوق في الفراخ عشان التتبيلة تدخل",
+                    "اخلط الثوم والليمون والزيت وجميع البهارات",
+                    "تبّل الفراخ بالتتبيلة كويس واتركها ساعة على الأقل",
+                    "سخن الفرن على 200 درجة",
+                    "رص الفراخ في صينية وادخلها الفرن 40-45 دقيقة",
+                    "قلّبها نص الوقت واعملها من فوق الشواية عشان تتحمر",
+                    "قدمها مع سلطة ومحمرة أو أرز"
+                ]
+            },
+            {
+                id: 7,
+                name: "مكرونة بالبشاميل",
+                emoji: "🍝",
+                category: "lunch",
+                categoryLabel: "☀️ غدا",
+                time: "45 دقيقة",
+                difficulty: "متوسط",
+                description: "مكرونة بالبشاميل الفرنسي.. وحدة بتكفي وتشبع",
+                ingredients: ["500g مكرونة", "2 كوب حليب", "2 ملعقة زبدة", "2 ملعقة دقيق", "جبنة شيدر مبشورة", "جبنة موزاريلا", "ملح وفلفل", "جوزة الطيب"],
+                steps: [
+                    "اسلق المكرونة نصف استواء وصفيها",
+                    "حضر البشاميل: ذوّب الزبدة واضف الدقيق وقلّب دقيقة",
+                    "اضف الحليب تدريجياً مع التقليب المستمر عشان متعملش كتل",
+                    "اضف الملح والفلفل وجوزة الطيب واستمر بالتقليب حتى يتكثف",
+                    "اضف نصف الجبن للبشاميل وقلّب",
+                    "اخلط المكرونة مع نصف البشاميل في صينية",
+                    "غطّيها بالبشاميل الباقي ورش الجبن وادخلها الفرن 20 دقيقة"
+                ]
+            },
+            {
+                id: 8,
+                name: "حمص بالطحينة",
+                emoji: "🫓",
+                category: "lunch",
+                categoryLabel: "☀️ غدا",
+                time: "15 دقيقة",
+                difficulty: "سهل",
+                description: "حمص كريمي بالطحينة.. يتعمل سريع ويتأكل أسرع",
+                ingredients: ["2 كوب حمص مسلوق", "3 ملاعق طحينة", "عصير ليمونة", "2 فص ثوم", "زيت زيتون", "ملح وكمون", "بابريكا للتزيين", "بقدونس"],
+                steps: [
+                    "ضع الحمص في الخلاط",
+                    "اضف الطحينة والثوم وعصير الليمون والملح والكمون",
+                    "اخلط جيداً واضف ماء بارد تدريجياً حتى تصل للقوام المطلوب",
+                    "قدمه في طبق واعمل حفرة في النص",
+                    "اسكب زيت زيتون في الحفرة ورش بابريكا وبقدونس",
+                    "قدمه مع خبز عربي طازج"
+                ]
+            },
+            {
+                id: 9,
+                name: "شاورما فراخ",
+                emoji: "🌯",
+                category: "dinner",
+                categoryLabel: "🌙 عشا",
+                time: "30 دقيقة",
+                difficulty: "متوسط",
+                description: "شاورما فراخ في البيت.. مذاقها بيعزق المطاعم",
+                ingredients: ["500g صدور فراخ شرائح", "2 ملعقة زبادي", "بهارات شاورما", "ثوم مهروس", "خل تفاح", "زيت زيتون", "فلفل ألوان", "بصل", "خبز عربي", "طحينة", "سلطة طحماطم"],
+                steps: [
+                    "تبّل الفراخ بالزبادي والبهارات والثوم والخل والزيت",
+                    "اتركها في الثلاجة ساعة على الأقل",
+                    "شوح الفراخ في مقلاة حارة على نار عالية حتى تتحمر",
+                    "اضف الفلفل والبصل وقلّب",
+                    "سخن الخبز العربي وحط شوية طحينة",
+                    "حط الفراخ والسلطة ولفّه",
+                    "قدمها ساخنة مع البطاطس والمخللات"
+                ]
+            },
+            {
+                id: 10,
+                name: "فتة بالخل والتوم",
+                emoji: "🧄",
+                category: "dinner",
+                categoryLabel: "🌙 عشا",
+                time: "30 دقيقة",
+                difficulty: "متوسط",
+                description: "فتة مصرية أصلية بالخل والثوم.. أكلة ملكية",
+                ingredients: ["خبز بلدي محمص", "1 كوب مرقة لحم أو فراخ", "3 فصوص ثوم", "ربع كوب خل أبيض", "ملح وفلفل", "كمون", "سمن بلدي", "لحم مفروم أو رزق (اختياري)"],
+                steps: [
+                    "قطّع الخبز لمكعبات صغيرة وحمّصه في الفرن أو على النار",
+                    "حضر الدقة: اهرس الثوم مع الملح واضف الخل والكمون",
+                    "سخن المرقة واضف الدقة عليها وقلّب (متغليش كتير عشان الخل ميطلعش ريحته)",
+                    "رص الخبز المحمص في الطبق",
+                    "اسكب مرقة الخل والتوم على الخبز",
+                    "لو في لحم، حمره وقدمه فوق الفتة",
+                    "قدمها فوراً ساخنة"
+                ]
+            },
+            {
+                id: 11,
+                name: "سندوتشات كشري من الشارع",
+                emoji: "🥖",
+                category: "dinner",
+                categoryLabel: "🌙 عشا",
+                time: "5 دقائق",
+                difficulty: "سهل",
+                description: "لما تبقى جعان الليل وتروح تشتري كشري من عربية الشارع",
+                ingredients: ["كشري جاهز أو من البراد", "خبز فرنسي", "دقة وتقلية جاهزة", "صلصة طماطم", "محمرة (اختياري)"],
+                steps: [
+                    "سخن الكشري لو بارد (ميكروويف أو على النار)",
+                    "افتح الخبز الفرنسي من النص",
+                    "حط الكشري بحيث يتوزع الأرز والمكرونة والعدس",
+                    "اسكب دقة كافية",
+                    "اضف صلصة طماطم",
+                    "رش تقلية كتير من فوق",
+                    "اقفل السندوتش وكله بسرعة قبل ما يسيح!"
+                ]
+            },
+            {
+                id: 12,
+                name: "أرز بقلب الدجاج",
+                emoji: "🍚",
+                category: "dinner",
+                categoryLabel: "🌙 عشا",
+                time: "40 دقيقة",
+                difficulty: "متوسط",
+                description: "أرز بمزاكة وقلب دجاج.. عشا مشبع ولذيذ",
+                ingredients: ["2 كوب أرز", "2 قلب دجاج", "بصلة مفرومة", "2 فص ثوم", "بهارات مشكلة", "كمون وكركم", "مرقة دجاج", "بقدونس", "زيت"],
+                steps: [
+                    "قطّع قلب الدجاج قطع صغيرة ونظّفه كويس",
+                    "شوح البصل ثم اضف القلب وقلّب حتى يتغير لونه",
+                    "اضف الثوم والبهارات والكمون والكركم",
+                    "اضف الأرز المغسول وقلّب مع القلب دقيقة",
+                    "اسكب المرقة (نسبة 1:1.5 أرز:مرقة)",
+                    "اتركه يغلي ثم خفّف النار وغطّيه 20 دقيقة",
+                    "قلّبه بالشوكة وزيّنه بالبقدونس"
+                ]
+            },
+            {
+                id: 13,
+                name: "كشك كريمي بالدجاج",
+                emoji: "🍲",
+                category: "dinner",
+                categoryLabel: "🌙 عشا",
+                time: "35 دقيقة",
+                difficulty: "سهل",
+                description: "كشك كريمي بالدجاج والمكرونة.. عشا دافي ومشبع",
+                ingredients: ["2 كوب مكرونة (أي شكل)", "1 كوب مرقة دجاج", "نصف كوب كريمة", "صدور دجاج مسلوقة ومفتتة", "بصلة", "ثوم", "بهارات", "جبنة مبشورة"],
+                steps: [
+                    "اسلق المكرونة نصف استواء",
+                    "شوح البصل والثوم في زبدة",
+                    "اضف المرقة والكريمة والبهارات",
+                    "اضف المكرونة والدجاج المفتت",
+                    "اتركه على نار هادية 10 دقائق حتى يتكثف",
+                    "رش جبنة على الوجه وقدمه",
+                    "يكفي مع سلطة خضراء"
+                ]
+            },
+            {
+                id: 14,
+                name: "فول بالزيت والليمون",
+                emoji: "🫙",
+                category: "snack",
+                categoryLabel: "🍿 سناك",
+                time: "5 دقائق",
+                difficulty: "سهل",
+                description: "أسرع سناك ممكن.. فول بالزيت والليمون والطماطم",
+                ingredients: ["علبة فول مدمس", "زيت زيتون", "ليمون", "طماطم", "بصل أخضر", "ملح وفلفل", "كمون"],
+                steps: [
+                    "افتح علبة الفول في طبق",
+                    "اضف عصير ليمونة",
+                    "رش ملح وفلفل وكمون",
+                    "قطّع طماطم وبصل أخضر فوقه",
+                    "اسكب زيت زيتون كويس على الوجه",
+                    "كله مع خبز بلدي واتمتع!"
+                ]
+            },
+            {
+                id: 15,
+                name: "بطاطس حارة بالفرن",
+                emoji: "🍟",
+                category: "snack",
+                categoryLabel: "🍿 سناك",
+                time: "30 دقيقة",
+                difficulty: "سهل",
+                description: "بطاطس مقرمشة بالفرن بتتبيلة حارة.. أسرع من الشيبسي وألذ",
+                ingredients: ["4 حبات بطاطس كبيرة", "زيت زيتون", "بهارات حارة", "بابريكا مدخنة", "ثوم بودرة", "ملح", "جبنة شيدر (اختياري)"],
+                steps: [
+                    "قطّع البطاطس لأسياخ سميكة",
+                    "انقعها في ماء نصف ساعة عشان تطلع النشا",
+                    "جفّفها كويس وتبّلها بجميع البهارات والزيت",
+                    "رصها في صينية مفرودة مغطاة بورق زبدة",
+                    "ادخلها فرن حار 220 درجة 25-30 دقيقة",
+                    "قلّبها نص الوقت عشان تتلون من كل الجهات",
+                    "اخرجها ورش عليها جبنة لو حابب"
+                ]
+            },
+            {
+                id: 16,
+                name: "سندوتش فلافل من البقالة",
+                emoji: "🥙",
+                category: "snack",
+                categoryLabel: "🍿 سناك",
+                time: "5 دقائق",
+                difficulty: "سهل",
+                description: "اشتري فلافل جاهزة واعمل سندوتش في دقيقة",
+                ingredients: ["فلافل جاهزة (من البقالة)", "خبز عربي", "سلطة خضراء", "طحينة", "مخللات", "حارة (اختياري)"],
+                steps: [
+                    "سخن الفلافل في الفرن أو المقلاة",
+                    "افتح الخبز العربي",
+                    "حط سلطة خضراء في القاعدة",
+                    "ضيف الفلافل (4-5 حبات)",
+                    "اضف طحينة ومخللات",
+                    "لو حابب حارة ضيفها",
+                    "لفّ السندوتش وكله وانت ماشي!"
+                ]
+            },
+            {
+                id: 17,
+                name: "عيش بالبيض المقلي",
+                emoji: "🍞",
+                category: "snack",
+                categoryLabel: "🍿 سناك",
+                time: "5 دقائق",
+                difficulty: "سهل",
+                description: "أبسط سناك في الدنيا.. عيش بيض وممكن تضيف جبن أو فلفل",
+                ingredients: ["عيش بلدي", "بيض", "زبدة أو زيت", "ملح وفلفل", "جبنة (اختياري)", "فلفل حار (اختياري)"],
+                steps: [
+                    "سخن الزبدة في المقلاة",
+                    "افرك البيض وقلّبه بسرعة (مش مسلوق)",
+                    "اضف الملح والفلفل",
+                    "قطّع العيش نصفين",
+                    "حط البيض في العيش",
+                    "اضف جبن أو فلفل لو حابب",
+                    "اقفل السندوتش وكله"
+                ]
+            },
+            {
+                id: 18,
+                name: "فتة حمص",
+                emoji: "🥣",
+                category: "lunch",
+                categoryLabel: "☀️ غدا",
+                time: "20 دقيقة",
+                difficulty: "سهل",
+                description: "فتة حمص بالزبدة والصنوبر.. أكلة شامية لذيذة جداً",
+                ingredients: ["2 كوب حمص مسلوق", "خبز محمص", "2 ملعقة زبدة", "صنوبر", "ملح وكمون", "مرقة", "لبن زبادي (اختياري)"],
+                steps: [
+                    "سخن المرقة واضف عليها الحمص",
+                    "تبّلها بالملح والكمون واتركها تغلي 5 دقائق",
+                    "رص الخبز المحمص في أطباق",
+                    "اسكب الحمص بالمرقة على الخبز",
+                    "ذوّب الزبدة وشوح فيها الصنوبر حتى يذهب",
+                    "اسكب الزبدة والصنوبر على الوجه",
+                    "قدمها فوراً"
+                ]
+            },
+            {
+                id: 19,
+                name: "محمرة بيض",
+                emoji: "🥚",
+                category: "breakfast",
+                categoryLabel: "🌅 فطار",
+                time: "15 دقيقة",
+                difficulty: "سهل",
+                description: "محمرة بيض بالبصل والطماطم.. فطار ريفي مصري أصيل",
+                ingredients: ["4 بيضات", "2 بصلة كبيرة مقطعة شرائح", "طماطم مقطعة", "فلفل أخضر", "ثوم", "بهارات مشكلة", "زيت", "ملح وفلفل"],
+                steps: [
+                    "سخن الزيت وشوح البصلة حتى تذهب ذهبي",
+                    "اضف الثوم والفلفل الأخضر وقلّب",
+                    "اضف الطماطم والبهارات والملح",
+                    "غطّي المقلاة واتركها 10 دقائق على نار هادية",
+                    "افتح حفر في المحمرة وكسّر البيض فيها",
+                    "غطّيها تاني حتى ينضج البيض",
+                    "قدمها مع خبز بلدي طازج"
+                ]
+            },
+            {
+                id: 20,
+                name: "شاي بالحليب وبسكويت",
+                emoji: "☕",
+                category: "snack",
+                categoryLabel: "🍿 سناك",
+                time: "10 دقائق",
+                difficulty: "سهل",
+                description: "شاي مصري بالحليب مع بسكويت.. سناك البيت المصري",
+                ingredients: ["ماء", "شاي أحمر", "حليب", "سكر", "بسكويت (أي نوع)"],
+                steps: [
+                    "سخن الماء في الابريق",
+                    "اضف الشاي واتركه يغلي 3 دقائق",
+                    "اضف الحليب والسكر حسب الذوق",
+                    "اتركه يغلي تاني شوية",
+                    "صبّه في أكواب",
+                    "قدمه مع البسكويت",
+                    "غمس البسكويت في الشاي واتمتع بلحظة هدوء!"
+                ]
+            }
+        ];
+
+        // ============ STATE ============
+        let favorites = JSON.parse(localStorage.getItem('meal-favs') || '[]');
+        let currentFilter = 'all';
+        let currentRandomId = null;
+
+        // ============ INIT ============
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            renderMeals('all');
+            updateFavCount();
+        });
+
+        // ============ RENDER MEALS ============
+        function renderMeals(category) {
+            const grid = document.getElementById('meals-grid');
+            const empty = document.getElementById('empty-state');
+            const filtered = category === 'all' ? meals : meals.filter(m => m.category === category);
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            empty.classList.add('hidden');
+            grid.innerHTML = filtered.map((meal, i) => `
+                <div class="meal-card card-hover rounded-xl border border-white/5 card-border overflow-hidden" style="animation-delay: ${i * 0.08}s">
+                    <div class="p-6">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="text-4xl">${meal.emoji}</div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs text-zinc-500 bg-white/5 px-2.5 py-1 rounded-full">${meal.difficulty}</span>
+                                <button onclick="toggleFavorite(${meal.id})" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/5 transition-colors">
+                                    <i data-lucide="${favorites.includes(meal.id) ? 'heart' : 'heart'}" class="w-4 h-4 ${favorites.includes(meal.id) ? 'text-red-400 fill-red-400' : 'text-zinc-600'}"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <h3 class="text-lg font-medium mb-1">${meal.name}</h3>
+                        <p class="text-sm text-zinc-500 mb-3">${meal.description}</p>
+                        <div class="flex items-center gap-4 mb-4">
+                            <span class="text-xs text-zinc-400 flex items-center gap-1">
+                                <i data-lucide="clock" class="w-3 h-3"></i>
+                                ${meal.time}
+                            </span>
+                            <span class="text-xs text-zinc-400">${meal.categoryLabel}</span>
+                        </div>
+                        <button onclick="toggleRecipe(${meal.id})" class="w-full py-2.5 rounded-lg border border-white/10 text-sm text-zinc-300 hover:bg-white/5 hover:border-white/20 transition-all flex items-center justify-center gap-2 recipe-toggle-btn" data-meal-id="${meal.id}">
+                            <i data-lucide="chef-hat" class="w-4 h-4"></i>
+                            <span>شوف الوصفة</span>
+                            <i data-lucide="chevron-down" class="w-3 h-3 transition-transform duration-300 recipe-chevron" data-meal-id="${meal.id}"></i>
+                        </button>
+
+                        <!-- Expandable Recipe -->
+                        <div class="recipe-content" id="recipe-${meal.id}">
+                            <div class="pt-4 border-t border-white/5 mt-4">
+                                <div class="mb-4">
+                                    <h4 class="text-sm font-medium text-emerald-400 mb-3 flex items-center gap-2">
+                                        <i data-lucide="list" class="w-4 h-4"></i>
+                                        المكونات
+                                    </h4>
+                                    <div class="flex flex-wrap gap-2">
+                                        ${meal.ingredients.map(ing => `<span class="tag-ingredient text-xs px-3 py-1.5 rounded-full text-zinc-300">${ing}</span>`).join('')}
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-medium text-emerald-400 mb-3 flex items-center gap-2">
+                                        <i data-lucide="flame" class="w-4 h-4"></i>
+                                        طريقة التحضير
+                                    </h4>
+                                    <div class="space-y-3">
+                                        ${meal.steps.map((step, j) => `
+                                            <div class="flex gap-3">
+                                                <div class="step-number rounded-full flex items-center justify-center text-xs font-medium text-white shrink-0">${j + 1}</div>
+                                                <p class="text-sm text-zinc-400 leading-relaxed pt-1">${step}</p>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        // ============ TOGGLE RECIPE ============
+        function toggleRecipe(mealId) {
+            const content = document.getElementById(`recipe-${mealId}`);
+            const chevron = document.querySelector(`.recipe-chevron[data-meal-id="${mealId}"]`);
+
+            if (content.classList.contains('open')) {
+                content.classList.remove('open');
+                chevron.style.transform = 'rotate(0deg)';
+            } else {
+                // Close all others first
+                document.querySelectorAll('.recipe-content.open').forEach(el => {
+                    el.classList.remove('open');
+                });
+                document.querySelectorAll('.recipe-chevron').forEach(el => {
+                    el.style.transform = 'rotate(0deg)';
+                });
+                content.classList.add('open');
+                chevron.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        // ============ FILTER ============
+        function filterMeals(category) {
+            currentFilter = category;
+
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.classList.add('text-zinc-400');
+            });
+            document.querySelector(`.category-btn[data-cat="${category}"]`).classList.add('active');
+            document.querySelector(`.category-btn[data-cat="${category}"]`).classList.remove('text-zinc-400');
+
+            renderMeals(category);
+        }
+
+        // ============ RANDOM MEAL ============
+        function randomMeal() {
+            const btn = document.getElementById('random-btn');
+            const diceIcon = document.getElementById('dice-icon');
+            diceIcon.classList.add('dice-spin');
+            btn.disabled = true;
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> بفكر...';
+            lucide.createIcons();
+
+            setTimeout(() => {
+                const randomIndex = Math.floor(Math.random() * meals.length);
+                const meal = meals[randomIndex];
+                currentRandomId = meal.id;
+
+                document.getElementById('random-emoji').textContent = meal.emoji;
+                document.getElementById('random-name').textContent = meal.name;
+                document.getElementById('random-category').textContent = meal.categoryLabel;
+                document.getElementById('random-time').textContent = meal.time + ' • ' + meal.difficulty;
+
+                const result = document.getElementById('random-result');
+                result.classList.remove('hidden');
+                result.querySelector('div').classList.remove('animate-scale-in');
+                void result.querySelector('div').offsetWidth;
+                result.querySelector('div').classList.add('animate-scale-in');
+
+                diceIcon.classList.remove('dice-spin');
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="wand-2" class="w-5 h-5"></i><span>يا تره إيه هيا؟</span>';
+                lucide.createIcons();
+            }, 800);
+        }
+
+        function showRecipeById() {
+            if (currentRandomId) openModal(currentRandomId);
+        }
+
+        // ============ MODAL ============
+        function openModal(mealId) {
+            const meal = meals.find(m => m.id === mealId);
+            if (!meal) return;
+
+            document.getElementById('modal-name').textContent = meal.name;
+            document.getElementById('modal-category-time').textContent = `${meal.categoryLabel} • ${meal.time} • ${meal.difficulty}`;
+
+            document.getElementById('modal-body').innerHTML = `
+                <div class="text-center mb-6">
+                    <div class="text-6xl mb-3">${meal.emoji}</div>
+                    <p class="text-zinc-400 font-light">${meal.description}</p>
+                </div>
+
+                <div class="mb-6">
+                    <h4 class="text-sm font-medium text-emerald-400 mb-3 flex items-center gap-2">
+                        <i data-lucide="list" class="w-4 h-4"></i>
+                        المكونات
+                    </h4>
+                    <div class="flex flex-wrap gap-2">
+                        ${meal.ingredients.map(ing => `<span class="tag-ingredient text-xs px-3 py-1.5 rounded-full text-zinc-300">${ing}</span>`).join('')}
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h4 class="text-sm font-medium text-emerald-400 mb-3 flex items-center gap-2">
+                        <i data-lucide="flame" class="w-4 h-4"></i>
+                        طريقة التحضير
+                    </h4>
+                    <div class="space-y-3">
+                        ${meal.steps.map((step, j) => `
+                            <div class="flex gap-3">
+                                <div class="step-number rounded-full flex items-center justify-center text-xs font-medium text-white shrink-0">${j + 1}</div>
+                                <p class="text-sm text-zinc-400 leading-relaxed pt-1">${step}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 pt-4 border-t border-white/5">
+                    <button onclick="toggleFavorite(${meal.id}); openModal(${meal.id});" class="flex-1 py-2.5 rounded-lg border border-white/10 text-sm text-zinc-300 hover:bg-white/5 transition-colors flex items-center justify-center gap-2">
+                        <i data-lucide="heart" class="w-4 h-4 ${favorites.includes(meal.id) ? 'text-red-400 fill-red-400' : ''}"></i>
+                        ${favorites.includes(meal.id) ? 'محفوظ في المفضلة' : 'احفظ في المفضلة'}
+                    </button>
+                    <button onclick="closeModal()" class="flex-1 btn-emerald py-2.5 rounded-lg text-sm font-medium flex items-center justify-center gap-2">
+                        <i data-lucide="check" class="w-4 h-4"></i>
+                        تمام
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('recipe-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            lucide.createIcons();
+        }
+
+        function closeModal() {
+            document.getElementById('recipe-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        // ============ FAVORITES ============
+        function toggleFavorite(mealId) {
+            const index = favorites.indexOf(mealId);
+            if (index > -1) {
+                favorites.splice(index, 1);
+                showToast('تم إزالته من المفضلة', '💔');
+            } else {
+                favorites.push(mealId);
+                const meal = meals.find(m => m.id === mealId);
+                showToast(`تم حفظ "${meal.name}" في المفضلة`, '❤️');
+            }
+            localStorage.setItem('meal-favs', JSON.stringify(favorites));
+            updateFavCount();
+            renderMeals(currentFilter);
+        }
+
+        function updateFavCount() {
+            document.getElementById('fav-count').textContent = favorites.length;
+        }
+
+        function openFavorites() {
+            const body = document.getElementById('fav-body');
+            if (favorites.length === 0) {
+                body.innerHTML = `
+                    <div class="text-center py-10">
+                        <div class="text-5xl mb-4">💔</div>
+                        <p class="text-zinc-400 mb-1">مفيش حاجة في المفضلة</p>
+                        <p class="text-zinc-600 text-sm">اضغط على ❤️ عشان تحفظ وجباتك المفضلة</p>
+                    </div>
+                `;
+            } else {
+                body.innerHTML = `
+                    <div class="space-y-3">
+                        ${favorites.map(id => {
+                            const meal = meals.find(m => m.id === id);
+                            if (!meal) return '';
+                            return `
+                                <div class="flex items-center gap-3 p-3 rounded-lg border border-white/5 hover:bg-white/3 transition-colors">
+                                    <div class="text-2xl">${meal.emoji}</div>
+                                    <div class="flex-1">
+                                        <div class="text-sm font-medium">${meal.name}</div>
+                                        <div class="text-xs text-zinc-500">${meal.categoryLabel} • ${meal.time}</div>
+                                    </div>
+                                    <button onclick="openModal(${meal.id}); closeFavorites();" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/5 transition-colors">
+                                        <i data-lucide="book-open" class="w-4 h-4 text-zinc-400"></i>
+                                    </button>
+                                    <button onclick="toggleFavorite(${meal.id}); openFavorites();" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/5 transition-colors">
+                                        <i data-lucide="x" class="w-4 h-4 text-zinc-500"></i>
+                                    </button>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+            }
+            document.getElementById('fav-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            lucide.createIcons();
+        }
+
+        function closeFavorites() {
+            document.getElementById('fav-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        // ============ TOAST ============
+        function showToast(message, emoji = '✅') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast glass-panel rounded-lg px-4 py-3 flex items-center gap-3 text-sm max-w-xs';
+            toast.innerHTML = `<span class="text-lg">${emoji}</span><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(10px)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
+        }
+
+        // ============ SCROLL ============
+        function scrollToRandom() {
+            document.getElementById('random').scrollIntoView({ behavior: 'smooth' });
+        }
+        function scrollToCategories() {
+            document.getElementById('categories').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // ============ KEYBOARD ============
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+                closeFavorites();
+            }
+        });
+    </script>
+</body>
+</html>
